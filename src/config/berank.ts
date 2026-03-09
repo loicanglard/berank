@@ -22,6 +22,7 @@ export interface BeRankChallenge {
     progressLabel: string;
     progressPercent: number;
     rewardPoints: number;
+    status?: 'in_progress' | 'not_started' | 'completed';
     completed: boolean;
 }
 

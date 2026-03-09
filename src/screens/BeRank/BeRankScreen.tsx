@@ -3,7 +3,7 @@ import BottomNav from '../../components/navigation/BottomNav';
 import BeRankChallengeItem from '../../components/widgets/BeRankChallengeItem';
 import BeRankProgress from '../../components/widgets/BeRankProgress';
 import BeRankRewardCard from '../../components/widgets/BeRankRewardCard';
-import { beRankContent } from '../../config/berank';
+import { beRankContent, type BeRankChallenge } from '../../config/berank';
 import { tokens } from '../../config/tokens';
 import MainLayout from '../../layouts/MainLayout';
 
@@ -12,10 +12,63 @@ interface BeRankScreenProps {
     onNavChange: (nav: string) => void;
 }
 
+const challengeStatusOrder: Record<'in_progress' | 'not_started' | 'completed', number> = {
+    in_progress: 0,
+    not_started: 1,
+    completed: 2,
+};
+
+const impactCardMeta: Record<
+    string,
+    {
+        icon: string;
+        hint?: string;
+        accent: string;
+        featured?: boolean;
+    }
+> = {
+    'responsible-purchases': {
+        icon: '◇',
+        hint: 'actions validées',
+        accent: 'rgba(139, 210, 168, 0.18)',
+    },
+    'points-month': {
+        icon: '↗',
+        hint: 'ce mois-ci',
+        accent: 'rgba(216, 194, 124, 0.18)',
+    },
+    'completed-challenges': {
+        icon: '✓',
+        hint: 'défis finalisés',
+        accent: 'rgba(255, 255, 255, 0.1)',
+    },
+    'positive-impact': {
+        icon: '✦',
+        hint: 'estimation',
+        accent: 'rgba(139, 210, 168, 0.22)',
+        featured: true,
+    },
+};
+
+const getChallengeStatus = (challenge: BeRankChallenge): 'in_progress' | 'not_started' | 'completed' => {
+    if (challenge.status) {
+        return challenge.status;
+    }
+
+    if (challenge.completed) {
+        return 'completed';
+    }
+
+    return challenge.progressPercent > 0 ? 'in_progress' : 'not_started';
+};
+
 const BeRankScreen: FC<BeRankScreenProps> = ({ currentNav, onNavChange }) => {
     const { summary, earnWays, challenges, rewards, impactMetrics } = beRankContent;
     const activeBottomTab = currentNav === 'BeRank' ? 'Comptes' : currentNav;
     const rankingLabel = 'Top 35% des utilisateurs BeRank';
+    const sortedChallenges = [...challenges].sort(
+        (left, right) => challengeStatusOrder[getChallengeStatus(left)] - challengeStatusOrder[getChallengeStatus(right)],
+    );
 
     return (
         <MainLayout>
@@ -66,7 +119,7 @@ const BeRankScreen: FC<BeRankScreenProps> = ({ currentNav, onNavChange }) => {
                 <section style={sectionStyle}>
                     <div style={sectionTitleStyle}>Défis en cours</div>
                     <div style={stackStyle}>
-                        {challenges.map((challenge) => (
+                        {sortedChallenges.map((challenge) => (
                             <BeRankChallengeItem key={challenge.id} challenge={challenge} />
                         ))}
                     </div>
@@ -101,9 +154,17 @@ const BeRankScreen: FC<BeRankScreenProps> = ({ currentNav, onNavChange }) => {
                     <div style={sectionTitleStyle}>Votre impact</div>
                     <div style={impactGridStyle}>
                         {impactMetrics.map((metric) => (
-                            <div key={metric.id} style={impactCardStyle}>
-                                <div style={impactValueStyle}>{metric.value}</div>
-                                <div style={impactLabelStyle}>{metric.label}</div>
+                            <div key={metric.id} style={getImpactCardStyle(metric.id)}>
+                                <div style={impactHeaderStyle}>
+                                    <div style={getImpactIconWrapStyle(metric.id)}>{impactCardMeta[metric.id]?.icon ?? '•'}</div>
+                                </div>
+                                <div style={impactBodyStyle}>
+                                    <div style={getImpactValueStyle(metric.id)}>{metric.value}</div>
+                                    <div style={impactLabelStyle}>{metric.label}</div>
+                                    {impactCardMeta[metric.id]?.hint ? (
+                                        <div style={impactHintStyle}>{impactCardMeta[metric.id].hint}</div>
+                                    ) : null}
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -315,22 +376,94 @@ const impactCardStyle: CSSProperties = {
     border: `1px solid ${tokens.colors.border}`,
     borderRadius: tokens.radius.md,
     padding: tokens.spacing.md,
-    minHeight: '96px',
+    minHeight: '118px',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
+    gap: tokens.spacing.sm,
+    overflow: 'hidden',
+    position: 'relative',
+};
+
+const impactHeaderStyle: CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+};
+
+const impactBodyStyle: CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px',
 };
 
 const impactValueStyle: CSSProperties = {
-    fontSize: '18px',
+    fontSize: '20px',
     fontWeight: '700',
     color: tokens.colors.text.primary,
+    letterSpacing: '-0.02em',
 };
 
 const impactLabelStyle: CSSProperties = {
-    fontSize: '11px',
+    fontSize: '12px',
+    fontWeight: '600',
+    color: tokens.colors.text.primary,
+    lineHeight: 1.4,
+};
+
+const impactHintStyle: CSSProperties = {
+    fontSize: '10px',
     color: tokens.colors.text.secondary,
     lineHeight: 1.4,
+};
+
+const getImpactCardStyle = (metricId: string): CSSProperties => {
+    const meta = impactCardMeta[metricId];
+
+    if (meta?.featured) {
+        return {
+            ...impactCardStyle,
+            background: 'linear-gradient(180deg, rgba(139, 210, 168, 0.08) 0%, rgba(26, 26, 26, 1) 100%)',
+            border: '1px solid rgba(139, 210, 168, 0.22)',
+            boxShadow: '0 10px 24px rgba(139, 210, 168, 0.08)',
+        };
+    }
+
+    return {
+        ...impactCardStyle,
+        background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(26, 26, 26, 1) 100%)',
+        border: `1px solid ${tokens.colors.border}`,
+        boxShadow: '0 8px 18px rgba(0, 0, 0, 0.14)',
+    };
+};
+
+const getImpactIconWrapStyle = (metricId: string): CSSProperties => {
+    const meta = impactCardMeta[metricId];
+
+    return {
+        width: '30px',
+        height: '30px',
+        borderRadius: tokens.radius.full,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '13px',
+        fontWeight: '700',
+        color: tokens.colors.text.primary,
+        backgroundColor: meta?.accent ?? 'rgba(255, 255, 255, 0.08)',
+        border: `1px solid ${meta?.featured ? 'rgba(139, 210, 168, 0.18)' : 'rgba(255, 255, 255, 0.06)'}`,
+    };
+};
+
+const getImpactValueStyle = (metricId: string): CSSProperties => {
+    if (impactCardMeta[metricId]?.featured) {
+        return {
+            ...impactValueStyle,
+            fontSize: '22px',
+        };
+    }
+
+    return impactValueStyle;
 };
 
 export default BeRankScreen;
