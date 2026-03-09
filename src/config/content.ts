@@ -10,14 +10,14 @@ export const mockContent = {
     },
     mainAccount: {
         label: 'Compte individuel',
-        balance: '65 090,55 €',
+        balance: '1 235,55 €',
         iban: '**4****2',
     },
     secondaryAccounts: [
-        { id: 1, label: 'LIVRET A', balance: '22 950,00 €', progress: 40, status: 'Il est encore possible d\'épargner' },
+        { id: 1, label: 'LIVRET A', balance: '2 950,00 €', progress: 40, status: 'Il est encore possible d\'épargner' },
         { id: 2, label: 'LIVRET JEUNE', balance: '1 600,00 €', progress: 100, status: 'Plafond du livret atteint !' },
         { id: 3, label: 'PEL 16 2014', balance: '5 540,20 €', progress: null },
-        { id: 4, label: 'MILLEVIE ESSENTIELLE', balance: '12 000,00 €', category: 'Placements financiers' },
+        { id: 4, label: 'MILLEVIE ESSENTIELLE', balance: ' 373,00 €', category: 'Placements financiers' },
         { id: 5, label: 'PRET CONSO', balance: '4 200,00 €', category: 'Crédits' },
     ],
     recentTransactions: [
