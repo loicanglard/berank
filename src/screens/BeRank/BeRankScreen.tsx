@@ -1,6 +1,7 @@
 import type { CSSProperties, FC } from 'react';
 import BottomNav from '../../components/navigation/BottomNav';
 import BeRankChallengeItem from '../../components/widgets/BeRankChallengeItem';
+import BeRankLogoMark from '../../components/widgets/BeRankLogoMark';
 import BeRankProgress from '../../components/widgets/BeRankProgress';
 import BeRankRewardCard from '../../components/widgets/BeRankRewardCard';
 import { beRankContent, type BeRankChallenge } from '../../config/berank';
@@ -78,7 +79,10 @@ const BeRankScreen: FC<BeRankScreenProps> = ({ currentNav, onNavChange }) => {
                         ←
                     </button>
                     <div>
-                        <h1 style={titleStyle}>BeRank</h1>
+                        <div style={titleRowStyle}>
+                            <BeRankLogoMark size={24} />
+                            <h1 style={titleStyle}>BeRank</h1>
+                        </div>
                         <p style={subtitleStyle}>Vos actions responsables et financières vous font progresser.</p>
                     </div>
                 </header>
@@ -87,9 +91,12 @@ const BeRankScreen: FC<BeRankScreenProps> = ({ currentNav, onNavChange }) => {
                     <div style={sectionTitleStyle}>Statut actuel</div>
                     <div style={statusCardStyle}>
                         <div style={statusTopRowStyle}>
-                            <div>
-                                <div style={rankLabelStyle}>Rang actuel</div>
-                                <div style={rankValueStyle}>{summary.rank}</div>
+                            <div style={statusLeadStyle}>
+                                <BeRankLogoMark size={24} />
+                                <div>
+                                    <div style={rankLabelStyle}>Rang actuel</div>
+                                    <div style={rankValueStyle}>{summary.rank}</div>
+                                </div>
                             </div>
                             <div style={pointsBlockStyle}>
                                 <div style={pointsValueStyle}>{summary.points.toLocaleString('fr-FR')} pts</div>
@@ -208,6 +215,12 @@ const titleStyle: CSSProperties = {
     color: tokens.colors.text.primary,
 };
 
+const titleRowStyle: CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: tokens.spacing.sm,
+};
+
 const subtitleStyle: CSSProperties = {
     margin: '6px 0 0',
     fontSize: '13px',
@@ -245,6 +258,12 @@ const statusTopRowStyle: CSSProperties = {
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     gap: tokens.spacing.md,
+};
+
+const statusLeadStyle: CSSProperties = {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: tokens.spacing.sm,
 };
 
 const rankLabelStyle: CSSProperties = {

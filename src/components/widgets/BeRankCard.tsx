@@ -1,6 +1,7 @@
 import type { CSSProperties, FC } from 'react';
 import { beRankContent } from '../../config/berank';
 import { tokens } from '../../config/tokens';
+import BeRankLogoMark from './BeRankLogoMark';
 import BeRankProgress from './BeRankProgress';
 
 interface BeRankCardProps {
@@ -15,7 +16,10 @@ const BeRankCard: FC<BeRankCardProps> = ({ onOpen }) => {
         <section style={cardStyle}>
             <div style={topRowStyle}>
                 <div>
-                    <div style={titleStyle}>BeRank</div>
+                    <div style={titleRowStyle}>
+                        <BeRankLogoMark size={22} />
+                        <div style={titleStyle}>BeRank</div>
+                    </div>
                     <div style={subtitleStyle}>Statut actuel : {summary.rank}</div>
                 </div>
                 <div style={rankBadgeStyle}>{summary.rank}</div>
@@ -63,6 +67,12 @@ const titleStyle: CSSProperties = {
     fontSize: '16px',
     fontWeight: '700',
     color: tokens.colors.text.primary,
+};
+
+const titleRowStyle: CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: tokens.spacing.sm,
 };
 
 const subtitleStyle: CSSProperties = {
