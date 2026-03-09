@@ -10,7 +10,7 @@ export const mockContent = {
     },
     mainAccount: {
         label: 'Compte individuel',
-        balance: '1 195,55 €',
+        balance: '65 090,55 €',
         iban: '**4****2',
     },
     secondaryAccounts: [
