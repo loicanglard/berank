@@ -8,6 +8,17 @@ import { beRankContent, type BeRankChallenge } from '../../config/berank';
 import { tokens } from '../../config/tokens';
 import MainLayout from '../../layouts/MainLayout';
 
+/** Compute a relative-time label from an ISO date string. */
+const relativeTime = (isoDate: string): string => {
+    const diffMs = Date.now() - new Date(isoDate).getTime();
+    const mins = Math.floor(diffMs / 60_000);
+    if (mins < 60) return `il y a ${mins} min`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `il y a ${hours} h`;
+    const days = Math.floor(hours / 24);
+    return `il y a ${days} j`;
+};
+
 interface BeRankScreenProps {
     currentNav: string;
     onNavChange: (nav: string) => void;
@@ -64,12 +75,13 @@ const getChallengeStatus = (challenge: BeRankChallenge): 'in_progress' | 'not_st
 };
 
 const BeRankScreen: FC<BeRankScreenProps> = ({ currentNav, onNavChange }) => {
-    const { summary, earnWays, challenges, rewards, impactMetrics } = beRankContent;
+    const { summary, challenges, rewards, impactMetrics, detectedEvents } = beRankContent;
     const activeBottomTab = currentNav === 'BeRank' ? 'Comptes' : currentNav;
     const rankingLabel = 'Top 35% des utilisateurs BeRank';
     const sortedChallenges = [...challenges].sort(
         (left, right) => challengeStatusOrder[getChallengeStatus(left)] - challengeStatusOrder[getChallengeStatus(right)],
     );
+    const nextReward = rewards.find(r => !r.available) || rewards[0];
 
     return (
         <MainLayout>
@@ -83,7 +95,7 @@ const BeRankScreen: FC<BeRankScreenProps> = ({ currentNav, onNavChange }) => {
                             <BeRankLogoMark size={24} />
                             <h1 style={titleStyle}>BeRank</h1>
                         </div>
-                        <p style={subtitleStyle}>Vos actions responsables et financières vous font progresser.</p>
+                        <p style={subtitleStyle}>Vos habitudes bancaires sont analysées automatiquement pour vous faire progresser.</p>
                     </div>
                 </header>
 
@@ -101,7 +113,6 @@ const BeRankScreen: FC<BeRankScreenProps> = ({ currentNav, onNavChange }) => {
                             <div style={pointsBlockStyle}>
                                 <div style={pointsValueStyle}>{summary.points.toLocaleString('fr-FR')} pts</div>
                                 <div style={pointsCaptionStyle}>Prochain rang : {summary.nextRank}</div>
-                                <div style={pointsCaptionStyle}>Plus que {summary.pointsToNextRank} pts</div>
                             </div>
                         </div>
 
@@ -116,51 +127,65 @@ const BeRankScreen: FC<BeRankScreenProps> = ({ currentNav, onNavChange }) => {
                             <div style={rankingValueStyle}>{rankingLabel}</div>
                         </div>
 
-                        <div style={nextRewardCardStyle}>
-                            <div style={nextRewardLabelStyle}>Prochaine récompense à débloquer</div>
-                            <div style={nextRewardValueStyle}>{summary.nextReward}</div>
+                        <div style={nextStepDividerStyle} />
+                        <div style={nextStepStyle}>
+                            <span style={nextStepArrowStyle}>→</span> Prochaine étape : Compléter 1 action pour atteindre le rang {summary.nextRank}
                         </div>
                     </div>
                 </section>
 
                 <section style={sectionStyle}>
-                    <div style={sectionTitleStyle}>Défis en cours</div>
+                    <div style={sectionTitleStyle}>Actions en cours</div>
                     <div style={stackStyle}>
-                        {sortedChallenges.map((challenge) => (
+                        {sortedChallenges.slice(0, 2).map((challenge) => (
                             <BeRankChallengeItem key={challenge.id} challenge={challenge} />
                         ))}
                     </div>
                 </section>
 
+                {/* ── Detected activity feed ── */}
                 <section style={sectionStyle}>
-                    <div style={sectionTitleStyle}>Gagner des points</div>
+                    <div style={sectionTitleStyle}>Activité détectée récemment</div>
                     <div style={stackStyle}>
-                        {earnWays.map((item) => (
-                            <div key={item.id} style={listCardStyle}>
-                                <div style={iconCircleStyle}>{item.icon}</div>
-                                <div style={listTextStyle}>
-                                    <div style={listTitleStyle}>{item.title}</div>
-                                    <div style={listDescriptionStyle}>{item.description}</div>
+                        {detectedEvents.slice(0, 3).map((evt) => (
+                            <div key={evt.id} style={eventCardStyle}>
+                                <div style={eventDotStyle} />
+                                <div style={eventTextBlockStyle}>
+                                    <div style={eventLabelStyle}>{evt.label}</div>
+                                    <div style={eventDetailStyle}>{evt.detail}</div>
                                 </div>
-                                <div style={listPointsStyle}>{item.pointsLabel}</div>
+                                <div style={eventTimeStyle}>{relativeTime(evt.detectedAt)}</div>
                             </div>
                         ))}
                     </div>
+                    <button type="button" style={viewMoreButtonStyle}>
+                        Voir tout l'historique
+                    </button>
                 </section>
 
+                {/* ── How it works ── */}
                 <section style={sectionStyle}>
-                    <div style={sectionTitleStyle}>Récompenses disponibles</div>
-                    <div style={stackStyle}>
-                        {rewards.map((reward) => (
-                            <BeRankRewardCard key={reward.id} reward={reward} />
-                        ))}
+                    <div style={sectionTitleStyle}>Comment ça marche</div>
+                    <div style={howItWorksCardStyle}>
+                        <div style={howItWorksRowStyle}>
+                            <div style={howItWorksIconStyle}>⚡</div>
+                            <div style={howItWorksTextStyle}>Vos transactions et habitudes sont analysées automatiquement.</div>
+                        </div>
+                        <div style={howItWorksRowStyle}>
+                            <div style={howItWorksIconStyle}>🔒</div>
+                            <div style={howItWorksTextStyle}>Aucune action manuelle requise — tout est passif.</div>
+                        </div>
+                        <div style={howItWorksRowStyle}>
+                            <div style={howItWorksIconStyle}>🎯</div>
+                            <div style={howItWorksTextStyle}>Les défis et récompenses s'adaptent à votre profil bancaire.</div>
+                        </div>
                     </div>
                 </section>
 
-                <section style={lastSectionStyle}>
+                <section style={sectionStyle}>
                     <div style={sectionTitleStyle}>Votre impact</div>
                     <div style={impactGridStyle}>
-                        {impactMetrics.map((metric) => (
+                        {impactMetrics.slice(0, 2).map((metric) => (
                             <div key={metric.id} style={getImpactCardStyle(metric.id)}>
                                 <div style={impactHeaderStyle}>
                                     <div style={getImpactIconWrapStyle(metric.id)}>{impactCardMeta[metric.id]?.icon ?? '•'}</div>
@@ -174,6 +199,30 @@ const BeRankScreen: FC<BeRankScreenProps> = ({ currentNav, onNavChange }) => {
                                 </div>
                             </div>
                         ))}
+                    </div>
+                </section>
+
+                {/* ── Récompenses débloquées ── */}
+                <section style={sectionStyle}>
+                    <div style={sectionTitleStyle}>Récompenses débloquées</div>
+                    <div style={stackStyle}>
+                        {rewards.filter(r => r.available).slice(0, 2).map(reward => (
+                            <div key={reward.id} style={unlockedRewardCardStyle}>
+                                <div style={unlockedRewardIconStyle}>✓</div>
+                                <div style={unlockedRewardTextStyle}>
+                                    <div style={unlockedRewardTypeStyle}>{reward.rewardType}</div>
+                                    <div style={unlockedRewardTitleStyle}>{reward.title}</div>
+                                </div>
+                                <div style={unlockedRewardStatusStyle}>Actif</div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                <section style={lastSectionStyle}>
+                    <div style={sectionTitleStyle}>Prochaine récompense à débloquer</div>
+                    <div style={stackStyle}>
+                        <BeRankRewardCard reward={nextReward} />
                     </div>
                 </section>
             </div>
@@ -229,11 +278,12 @@ const subtitleStyle: CSSProperties = {
 };
 
 const sectionStyle: CSSProperties = {
-    padding: `0 ${tokens.spacing.md} ${tokens.spacing.lg}`,
+    padding: `0 ${tokens.spacing.md} ${tokens.spacing.xl}`,
 };
 
 const lastSectionStyle: CSSProperties = {
     padding: `0 ${tokens.spacing.md} ${tokens.spacing.xl}`,
+    marginBottom: tokens.spacing.xl,
 };
 
 const sectionTitleStyle: CSSProperties = {
@@ -294,11 +344,24 @@ const pointsValueStyle: CSSProperties = {
     color: '#D8C27C',
 };
 
-const nextRewardCardStyle: CSSProperties = {
-    padding: tokens.spacing.md,
-    borderRadius: tokens.radius.md,
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',
-    border: `1px solid rgba(255, 255, 255, 0.05)`,
+const nextStepDividerStyle: CSSProperties = {
+    height: '1px',
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    margin: `${tokens.spacing.xs} 0 0 0`,
+};
+
+const nextStepStyle: CSSProperties = {
+    fontSize: '12px',
+    color: tokens.colors.text.primary,
+    fontWeight: '600',
+    display: 'flex',
+    alignItems: 'center',
+    gap: tokens.spacing.sm,
+};
+
+const nextStepArrowStyle: CSSProperties = {
+    color: '#8BD2A8',
+    fontSize: '14px',
 };
 
 const rankingCardStyle: CSSProperties = {
@@ -320,68 +383,144 @@ const rankingValueStyle: CSSProperties = {
     color: tokens.colors.text.primary,
 };
 
-const nextRewardLabelStyle: CSSProperties = {
-    fontSize: '11px',
-    color: tokens.colors.text.secondary,
-};
-
-const nextRewardValueStyle: CSSProperties = {
-    marginTop: '6px',
-    fontSize: '14px',
-    fontWeight: '600',
-    color: tokens.colors.text.primary,
-};
-
 const stackStyle: CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
     gap: tokens.spacing.sm,
 };
 
-const listCardStyle: CSSProperties = {
+/* ── Unlocked rewards styles ── */
+
+const unlockedRewardCardStyle: CSSProperties = {
     display: 'flex',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     gap: tokens.spacing.md,
     padding: tokens.spacing.md,
-    backgroundColor: tokens.colors.surface,
+    backgroundColor: 'rgba(255, 255, 255, 0.02)',
     border: `1px solid ${tokens.colors.border}`,
     borderRadius: tokens.radius.md,
 };
 
-const iconCircleStyle: CSSProperties = {
-    width: '40px',
-    height: '40px',
+const unlockedRewardIconStyle: CSSProperties = {
+    width: '32px',
+    height: '32px',
     borderRadius: '50%',
+    backgroundColor: 'rgba(106, 174, 138, 0.12)',
+    color: '#8BD2A8',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(106, 174, 138, 0.12)',
-    fontSize: '18px',
+    fontSize: '14px',
     flexShrink: 0,
 };
 
-const listTextStyle: CSSProperties = {
+const unlockedRewardTextStyle: CSSProperties = {
     flex: 1,
 };
 
-const listTitleStyle: CSSProperties = {
+const unlockedRewardTypeStyle: CSSProperties = {
+    fontSize: '10px',
+    color: tokens.colors.text.secondary,
+    textTransform: 'uppercase',
+    letterSpacing: '0.04em',
+    marginBottom: '2px',
+};
+
+const unlockedRewardTitleStyle: CSSProperties = {
     fontSize: '13px',
     fontWeight: '600',
     color: tokens.colors.text.primary,
 };
 
-const listDescriptionStyle: CSSProperties = {
-    marginTop: '4px',
-    fontSize: '12px',
-    color: tokens.colors.text.secondary,
-    lineHeight: 1.4,
+const unlockedRewardStatusStyle: CSSProperties = {
+    fontSize: '11px',
+    fontWeight: '600',
+    color: '#8BD2A8',
 };
 
-const listPointsStyle: CSSProperties = {
+/* ── Detected activity feed styles ── */
+
+const eventCardStyle: CSSProperties = {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: tokens.spacing.sm,
+    padding: `${tokens.spacing.sm} 0`,
+};
+
+const viewMoreButtonStyle: CSSProperties = {
+    marginTop: tokens.spacing.sm,
+    background: 'none',
+    border: 'none',
+    color: tokens.colors.text.secondary,
     fontSize: '11px',
-    fontWeight: '700',
-    color: '#8BD2A8',
+    fontWeight: '600',
+    cursor: 'pointer',
+    padding: 0,
+    textDecoration: 'underline',
+};
+
+const eventDotStyle: CSSProperties = {
+    width: '8px',
+    height: '8px',
+    borderRadius: '50%',
+    backgroundColor: '#8BD2A8',
+    marginTop: '5px',
+    flexShrink: 0,
+};
+
+const eventTextBlockStyle: CSSProperties = {
+    flex: 1,
+};
+
+const eventLabelStyle: CSSProperties = {
+    fontSize: '12px',
+    fontWeight: '600',
+    color: tokens.colors.text.secondary,
+};
+
+const eventDetailStyle: CSSProperties = {
+    marginTop: '2px',
+    fontSize: '11px',
+    color: tokens.colors.text.secondary,
+};
+
+const eventTimeStyle: CSSProperties = {
+    fontSize: '10px',
+    color: tokens.colors.text.muted,
     whiteSpace: 'nowrap',
+    flexShrink: 0,
+    marginTop: '2px',
+};
+
+/* ── How it works styles ── */
+
+const howItWorksCardStyle: CSSProperties = {
+    backgroundColor: tokens.colors.surface,
+    border: `1px solid ${tokens.colors.border}`,
+    borderRadius: tokens.radius.md,
+    padding: tokens.spacing.md,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: tokens.spacing.md,
+};
+
+const howItWorksRowStyle: CSSProperties = {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: tokens.spacing.sm,
+};
+
+const howItWorksIconStyle: CSSProperties = {
+    fontSize: '16px',
+    flexShrink: 0,
+    width: '24px',
+    textAlign: 'center',
+};
+
+const howItWorksTextStyle: CSSProperties = {
+    fontSize: '12px',
+    color: tokens.colors.text.secondary,
+    lineHeight: 1.5,
 };
 
 const impactGridStyle: CSSProperties = {
@@ -395,11 +534,11 @@ const impactCardStyle: CSSProperties = {
     border: `1px solid ${tokens.colors.border}`,
     borderRadius: tokens.radius.md,
     padding: tokens.spacing.md,
-    minHeight: '118px',
+    minHeight: 'auto',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    gap: tokens.spacing.sm,
+    gap: tokens.spacing.md,
     overflow: 'hidden',
     position: 'relative',
 };

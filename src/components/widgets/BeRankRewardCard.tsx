@@ -10,9 +10,12 @@ const BeRankRewardCard: FC<BeRankRewardCardProps> = ({ reward }) => {
     return (
         <div style={cardStyle}>
             <div style={topRowStyle}>
-                <div style={titleStyle}>{reward.title}</div>
+                <div>
+                    <div style={rewardTypeStyle}>{reward.rewardType}</div>
+                    <div style={titleStyle}>{reward.title}</div>
+                </div>
                 <div style={statusStyle(reward.available)}>
-                    {reward.available ? 'Disponible' : 'À débloquer'}
+                    {reward.available ? 'Actif' : 'À débloquer'}
                 </div>
             </div>
             <div style={descriptionStyle}>{reward.description}</div>
@@ -38,8 +41,16 @@ const topRowStyle: CSSProperties = {
     gap: tokens.spacing.sm,
 };
 
+const rewardTypeStyle: CSSProperties = {
+    fontSize: '10px',
+    fontWeight: '700',
+    color: tokens.colors.text.secondary,
+    textTransform: 'uppercase',
+    letterSpacing: '0.06em',
+    marginBottom: '4px',
+};
+
 const titleStyle: CSSProperties = {
-    flex: 1,
     fontSize: '13px',
     fontWeight: '700',
     color: tokens.colors.text.primary,
@@ -65,6 +76,7 @@ const statusStyle = (available: boolean): CSSProperties => ({
     fontSize: '10px',
     fontWeight: '700',
     whiteSpace: 'nowrap',
+    flexShrink: 0,
 });
 
 export default BeRankRewardCard;
