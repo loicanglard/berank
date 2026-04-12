@@ -2,19 +2,34 @@ import React, { useState } from 'react';
 import TopHeader from '../../components/navigation/TopHeader';
 import BalanceCard from '../../components/widgets/BalanceCard';
 import BeRankCard from '../../components/widgets/BeRankCard';
+import { PurchaseSimulationForm } from '../../components/widgets/PurchaseSimulationForm';
 import TransactionList from '../../components/widgets/TransactionList';
 import BottomNav from '../../components/navigation/BottomNav';
 import MainLayout from '../../layouts/MainLayout';
+import type { BeRankSummary } from '../../config/berank';
 import { tokens } from '../../config/tokens';
 import { mockContent } from '../../config/content';
+import type { AccountTransaction, PurchaseCategory } from '../../utils/beRankSimulation';
 
 interface HomeScreenProps {
     currentNav: string;
     onNavChange: (nav: string) => void;
+    beRankSummary: BeRankSummary;
+    activeChallengesCount: number;
+    transactions: AccountTransaction[];
+    onSimulatePurchase: (category: PurchaseCategory, amount: number) => void;
 }
 
-const HomeScreen: React.FC<HomeScreenProps> = ({ currentNav, onNavChange }) => {
+const HomeScreen: React.FC<HomeScreenProps> = ({
+    currentNav,
+    onNavChange,
+    beRankSummary,
+    activeChallengesCount,
+    transactions,
+    onSimulatePurchase,
+}) => {
     const [activeSubTab, setActiveSubTab] = useState('Tous');
+    const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
 
     return (
         <MainLayout>
@@ -25,7 +40,32 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ currentNav, onNavChange }) => {
                     <>
                         <div style={sectionTitleStyle}>{mockContent.sections.current}</div>
                         <BalanceCard />
-                        <BeRankCard onOpen={() => onNavChange('BeRank')} />
+                        <BeRankCard
+                            onOpen={() => onNavChange('BeRank')}
+                            summary={beRankSummary}
+                            activeChallengesCount={activeChallengesCount}
+                        />
+
+                        <div style={simulatorSectionStyle}>
+                            <button
+                                type="button"
+                                style={simulatorToggleStyle}
+                                onClick={() => setIsSimulatorOpen((open) => !open)}
+                            >
+                                <span>Simuler un achat</span>
+                                <span aria-hidden="true">{isSimulatorOpen ? '−' : '+'}</span>
+                            </button>
+
+                            {isSimulatorOpen && (
+                                <PurchaseSimulationForm
+                                    submitLabel="Ajouter l'achat"
+                                    onSubmit={(category, amount) => {
+                                        onSimulatePurchase(category, amount);
+                                        setIsSimulatorOpen(false);
+                                    }}
+                                />
+                            )}
+                        </div>
 
                         <div style={promoCardStyle}>
                             <div style={promoBadgeStyle}>
@@ -97,7 +137,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ currentNav, onNavChange }) => {
                         </div>
 
                         <div style={{ padding: tokens.spacing.md, marginTop: '24px' }}>
-                            <TransactionList />
+                            <TransactionList transactions={transactions} />
                         </div>
                     </>
                 ) : (
@@ -229,6 +269,28 @@ const promoLinkStyle: React.CSSProperties = {
     fontSize: '12px',
     fontWeight: '600',
     textDecoration: 'underline',
+};
+
+const simulatorSectionStyle: React.CSSProperties = {
+    margin: `-${tokens.spacing.md} ${tokens.spacing.md} ${tokens.spacing.lg}`,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: tokens.spacing.sm,
+};
+
+const simulatorToggleStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    padding: `${tokens.spacing.sm} ${tokens.spacing.md}`,
+    borderRadius: tokens.radius.md,
+    border: '1px solid rgba(255,255,255,0.08)',
+    backgroundColor: 'rgba(255,255,255,0.03)',
+    color: tokens.colors.text.primary,
+    fontSize: '13px',
+    fontWeight: '600',
+    cursor: 'pointer',
 };
 
 const actionCardStyle: React.CSSProperties = {

@@ -1,13 +1,17 @@
 import React from 'react';
 import { tokens } from '../../config/tokens';
-import { mockContent } from '../../config/content';
+import type { AccountTransaction } from '../../utils/beRankSimulation';
 
-const TransactionList: React.FC = () => {
+interface TransactionListProps {
+    transactions: AccountTransaction[];
+}
+
+const TransactionList: React.FC<TransactionListProps> = ({ transactions }) => {
     return (
         <section style={containerStyle}>
             <h2 style={titleStyle}>Dernières opérations</h2>
             <div style={listStyle}>
-                {mockContent.recentTransactions.map(tx => (
+                {transactions.map(tx => (
                     <div key={tx.id} style={txItemStyle}>
                         <div style={txInfoStyle}>
                             <div style={txLabelStyle}>{tx.label}</div>

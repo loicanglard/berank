@@ -1,17 +1,16 @@
 import type { CSSProperties, FC } from 'react';
-import { beRankContent } from '../../config/berank';
 import { tokens } from '../../config/tokens';
+import type { BeRankSummary } from '../../config/berank';
 import BeRankLogoMark from './BeRankLogoMark';
 import BeRankProgress from './BeRankProgress';
 
 interface BeRankCardProps {
     onOpen: () => void;
+    summary: BeRankSummary;
+    activeChallengesCount: number;
 }
 
-const BeRankCard: FC<BeRankCardProps> = ({ onOpen }) => {
-    const { summary, challenges } = beRankContent;
-    const activeChallengesCount = challenges.filter((challenge) => !challenge.completed).length;
-
+const BeRankCard: FC<BeRankCardProps> = ({ onOpen, summary, activeChallengesCount }) => {
     return (
         <section style={cardStyle}>
             <div style={topRowStyle}>
