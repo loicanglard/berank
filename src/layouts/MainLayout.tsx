@@ -7,7 +7,7 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     return (
-        <div style={shellStyle}>
+        <div className="app-shell" style={shellStyle}>
             <main style={contentStyle}>
                 {children}
             </main>
@@ -17,7 +17,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
 const shellStyle: React.CSSProperties = {
     width: '100%',
-    maxWidth: tokens.layout.maxWidth,
+    maxWidth: `var(--app-shell-max-width, ${tokens.layout.maxWidth})`,
     minHeight: '100vh',
     backgroundColor: '#000000', // Pure black as seen in dark mode screenshots
     display: 'flex',
