@@ -25,6 +25,7 @@ interface Reward {
     category: RewardCategory;
     details?: string;
     conditions?: string;
+    image?: string;
 }
 
 const REWARDS: Reward[] = [
