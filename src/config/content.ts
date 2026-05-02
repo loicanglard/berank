@@ -29,6 +29,7 @@ export const mockContent = {
         { label: 'Comptes', icon: '🏦', active: true },
         { label: 'Virements', icon: '↔️', active: false },
         { label: 'Cartes', icon: '💳', active: false },
+        { label: 'BeShop', icon: '🛍️', active: false },
         { label: 'Souscrire', icon: '✏️', active: false },
         { label: 'Plus', icon: '☰', active: false },
     ],

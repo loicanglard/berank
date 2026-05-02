@@ -40,6 +40,7 @@ interface BeRankScreenProps {
     impactMetrics: BeRankImpactMetric[];
     detectedEvents: BeRankDetectedEvent[];
     onSimulatePurchase: (category: PurchaseCategory, amount: number) => void;
+    beCoins?: number;
 }
 
 const challengeStatusOrder: Record<'in_progress' | 'not_started' | 'completed', number> = {
@@ -60,22 +61,22 @@ const impactCardMeta: Record<
     'responsible-purchases': {
         icon: '◇',
         hint: 'actions validées',
-        accent: 'rgba(139, 210, 168, 0.18)',
+        accent: 'rgba(74, 222, 128, 0.16)',
     },
     'points-month': {
         icon: '↗',
         hint: 'ce mois-ci',
-        accent: 'rgba(216, 194, 124, 0.18)',
+        accent: 'rgba(216, 169, 73, 0.16)',
     },
     'completed-challenges': {
         icon: '✓',
         hint: 'défis finalisés',
-        accent: 'rgba(255, 255, 255, 0.1)',
+        accent: 'rgba(74, 222, 128, 0.12)',
     },
     'positive-impact': {
         icon: '✦',
         hint: 'estimation',
-        accent: 'rgba(139, 210, 168, 0.22)',
+        accent: 'rgba(74, 222, 128, 0.18)',
         featured: true,
     },
 };
@@ -104,6 +105,7 @@ const BeRankScreen: FC<BeRankScreenProps> = ({
     impactMetrics,
     detectedEvents,
     onSimulatePurchase,
+    beCoins = 0,
 }) => {
     const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
     const activeBottomTab = currentNav === 'BeRank' ? 'Comptes' : currentNav;
@@ -127,9 +129,9 @@ const BeRankScreen: FC<BeRankScreenProps> = ({
                     </div>
                 </header>
 
-                <section style={sectionStyle}>
+                <section style={sectionStyle} className="fade-in-up">
                     <div style={sectionTitleStyle}>Statut actuel</div>
-                    <div style={statusCardStyle}>
+                    <div style={statusCardStyle} className="pulse-subtle">
                         <div style={statusTopRowStyle}>
                             <div style={statusLeadStyle}>
                                 <BeRankLogoMark size={24} />
@@ -162,7 +164,15 @@ const BeRankScreen: FC<BeRankScreenProps> = ({
                     </div>
                 </section>
 
-                <section style={sectionStyle}>
+                <section style={sectionStyle} className="fade-in-up-delay-1">
+                    <div style={beCoinCardStyle}>
+                        <div style={beCoinLabelStyle}>Vos BeCoins</div>
+                        <div style={beCoinValueStyle}>{beCoins}</div>
+                        <div style={beCoinHintStyle}>💰 Utilisables dans BeShop</div>
+                    </div>
+                </section>
+
+                <section style={sectionStyle} className="fade-in-up-delay-2">
                     <div style={sectionTitleStyle}>Activité détectée récemment</div>
                     <div style={stackStyle}>
                         {detectedEvents.slice(0, 5).map((evt) => (
@@ -181,7 +191,7 @@ const BeRankScreen: FC<BeRankScreenProps> = ({
                     </button>
                 </section>
 
-                <section style={sectionStyle}>
+                <section style={sectionStyle} className="fade-in-up-delay-3">
                     <div style={sectionTitleStyle}>Simuler un achat</div>
                     <div style={simulatorCardStyle}>
                         <button
@@ -205,7 +215,7 @@ const BeRankScreen: FC<BeRankScreenProps> = ({
                     </div>
                 </section>
 
-                <section style={sectionStyle}>
+                <section style={sectionStyle} className="fade-in-up-delay-1">
                     <div style={sectionTitleStyle}>Actions en cours</div>
                     <div style={stackStyle}>
                         {sortedChallenges.slice(0, 3).map((challenge) => (
@@ -214,7 +224,7 @@ const BeRankScreen: FC<BeRankScreenProps> = ({
                     </div>
                 </section>
 
-                <section style={sectionStyle}>
+                <section style={sectionStyle} className="fade-in-up-delay-2">
                     <div style={sectionTitleStyle}>Historique des défis complétés</div>
                     <div style={stackStyle}>
                         {challengeHistory.length > 0 ? (
@@ -222,7 +232,12 @@ const BeRankScreen: FC<BeRankScreenProps> = ({
                                 <div key={entry.id} style={historyCardStyle}>
                                     <div style={historyTopRowStyle}>
                                         <div style={historyTitleStyle}>{entry.title}</div>
-                                        <div style={historyPointsStyle}>+{entry.rewardPoints} pts</div>
+                                        <div style={historyRewardsStyle}>
+                                            <span style={historyPointsStyle}>+{entry.rewardPoints} pts</span>
+                                            {entry.rewardCoins && (
+                                                <span style={historyCoinsStyle}>+{entry.rewardCoins} 💰</span>
+                                            )}
+                                        </div>
                                     </div>
                                     <div style={historyMetaStyle}>Complété {relativeTime(entry.completedAt)}</div>
                                     {entry.unlockedBenefit ? (
@@ -236,7 +251,7 @@ const BeRankScreen: FC<BeRankScreenProps> = ({
                     </div>
                 </section>
 
-                <section style={sectionStyle}>
+                <section style={sectionStyle} className="fade-in-up-delay-3">
                     <div style={sectionTitleStyle}>Comment ça marche</div>
                     <div style={howItWorksCardStyle}>
                         <div style={howItWorksRowStyle}>
@@ -254,7 +269,7 @@ const BeRankScreen: FC<BeRankScreenProps> = ({
                     </div>
                 </section>
 
-                <section style={sectionStyle}>
+                <section style={sectionStyle} className="fade-in-up-delay-1">
                     <div style={sectionTitleStyle}>Votre impact</div>
                     <div style={impactGridStyle}>
                         {impactMetrics.map((metric) => (
@@ -274,7 +289,7 @@ const BeRankScreen: FC<BeRankScreenProps> = ({
                     </div>
                 </section>
 
-                <section style={sectionStyle}>
+                <section style={sectionStyle} className="fade-in-up-delay-2">
                     <div style={sectionTitleStyle}>Récompenses débloquées</div>
                     <div style={stackStyle}>
                         {availableRewards.slice(0, 2).map(reward => (
@@ -370,8 +385,8 @@ const simulatorToggleStyle: CSSProperties = {
     width: '100%',
     padding: `${tokens.spacing.sm} ${tokens.spacing.md}`,
     borderRadius: tokens.radius.md,
-    border: '1px solid rgba(255,255,255,0.08)',
-    backgroundColor: 'rgba(255,255,255,0.03)',
+    border: `1px solid var(--color-border)`,
+    backgroundColor: 'var(--color-surface)',
     color: tokens.colors.text.primary,
     fontSize: '13px',
     fontWeight: '600',
@@ -386,8 +401,8 @@ const sectionTitleStyle: CSSProperties = {
 };
 
 const statusCardStyle: CSSProperties = {
-    background: 'linear-gradient(180deg, rgba(106, 174, 138, 0.14) 0%, rgba(26, 26, 26, 1) 50%)',
-    border: `1px solid rgba(106, 174, 138, 0.35)`,
+    background: 'var(--berank-gradient)',
+    border: '1px solid rgba(74, 222, 128, 0.2)',
     borderRadius: tokens.radius.md,
     padding: tokens.spacing.md,
     display: 'flex',
@@ -433,12 +448,12 @@ const pointsValueStyle: CSSProperties = {
     marginTop: '4px',
     fontSize: '22px',
     fontWeight: '700',
-    color: '#D8C27C',
+    color: 'var(--color-accent-coin)',
 };
 
 const nextStepDividerStyle: CSSProperties = {
     height: '1px',
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    backgroundColor: 'var(--color-border)',
     margin: `${tokens.spacing.xs} 0 0 0`,
 };
 
@@ -452,15 +467,15 @@ const nextStepStyle: CSSProperties = {
 };
 
 const nextStepArrowStyle: CSSProperties = {
-    color: '#8BD2A8',
+    color: 'var(--color-accent-green)',
     fontSize: '14px',
 };
 
 const rankingCardStyle: CSSProperties = {
     padding: tokens.spacing.md,
     borderRadius: tokens.radius.md,
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',
-    border: `1px solid rgba(255, 255, 255, 0.05)`,
+    backgroundColor: tokens.colors.surface,
+    border: `1px solid ${tokens.colors.border}`,
 };
 
 const rankingTitleStyle: CSSProperties = {
@@ -475,6 +490,35 @@ const rankingValueStyle: CSSProperties = {
     color: tokens.colors.text.primary,
 };
 
+const beCoinCardStyle: CSSProperties = {
+    padding: tokens.spacing.md,
+    borderRadius: tokens.radius.md,
+    backgroundColor: 'rgba(216, 169, 73, 0.1)',
+    border: '1px solid rgba(216, 169, 73, 0.2)',
+    textAlign: 'center',
+    position: 'relative',
+};
+
+const beCoinLabelStyle: CSSProperties = {
+    fontSize: '11px',
+    color: tokens.colors.text.secondary,
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px',
+};
+
+const beCoinValueStyle: CSSProperties = {
+    marginTop: '8px',
+    fontSize: '32px',
+    fontWeight: '700',
+    color: 'var(--color-accent-coin)',
+};
+
+const beCoinHintStyle: CSSProperties = {
+    marginTop: '6px',
+    fontSize: '11px',
+    color: tokens.colors.text.secondary,
+};
+
 const stackStyle: CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
@@ -486,7 +530,7 @@ const historyCardStyle: CSSProperties = {
     flexDirection: 'column',
     gap: '6px',
     padding: tokens.spacing.md,
-    backgroundColor: 'rgba(255, 255, 255, 0.02)',
+    backgroundColor: tokens.colors.surface,
     border: `1px solid ${tokens.colors.border}`,
     borderRadius: tokens.radius.md,
 };
@@ -509,8 +553,24 @@ const historyPointsStyle: CSSProperties = {
     flexShrink: 0,
     padding: '4px 8px',
     borderRadius: '999px',
-    backgroundColor: 'rgba(106, 174, 138, 0.12)',
-    color: '#8BD2A8',
+    backgroundColor: 'rgba(74, 222, 128, 0.12)',
+    color: 'var(--color-accent-green)',
+    fontSize: '11px',
+    fontWeight: '700',
+};
+
+const historyRewardsStyle: CSSProperties = {
+    display: 'flex',
+    gap: '6px',
+    alignItems: 'center',
+};
+
+const historyCoinsStyle: CSSProperties = {
+    flexShrink: 0,
+    padding: '4px 8px',
+    borderRadius: '999px',
+    backgroundColor: 'rgba(216, 169, 73, 0.15)',
+    color: 'var(--color-accent-coin)',
     fontSize: '11px',
     fontWeight: '700',
 };
@@ -527,7 +587,7 @@ const historyBenefitStyle: CSSProperties = {
 
 const historyEmptyStyle: CSSProperties = {
     padding: tokens.spacing.md,
-    backgroundColor: 'rgba(255, 255, 255, 0.02)',
+    backgroundColor: tokens.colors.surface,
     border: `1px dashed ${tokens.colors.border}`,
     borderRadius: tokens.radius.md,
     color: tokens.colors.text.secondary,
@@ -541,7 +601,7 @@ const unlockedRewardCardStyle: CSSProperties = {
     alignItems: 'center',
     gap: tokens.spacing.md,
     padding: tokens.spacing.md,
-    backgroundColor: 'rgba(255, 255, 255, 0.02)',
+    backgroundColor: tokens.colors.surface,
     border: `1px solid ${tokens.colors.border}`,
     borderRadius: tokens.radius.md,
 };
@@ -550,8 +610,8 @@ const unlockedRewardIconStyle: CSSProperties = {
     width: '32px',
     height: '32px',
     borderRadius: '50%',
-    backgroundColor: 'rgba(106, 174, 138, 0.12)',
-    color: '#8BD2A8',
+    backgroundColor: 'rgba(74, 222, 128, 0.12)',
+    color: 'var(--color-accent-green)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -580,7 +640,7 @@ const unlockedRewardTitleStyle: CSSProperties = {
 const unlockedRewardStatusStyle: CSSProperties = {
     fontSize: '11px',
     fontWeight: '600',
-    color: '#8BD2A8',
+    color: 'var(--color-accent-green)',
 };
 
 /* ── Detected activity feed styles ── */
@@ -608,7 +668,7 @@ const eventDotStyle: CSSProperties = {
     width: '8px',
     height: '8px',
     borderRadius: '50%',
-    backgroundColor: '#8BD2A8',
+    backgroundColor: 'var(--color-accent-green)',
     marginTop: '5px',
     flexShrink: 0,
 };
@@ -726,17 +786,17 @@ const getImpactCardStyle = (metricId: string): CSSProperties => {
     if (meta?.featured) {
         return {
             ...impactCardStyle,
-            background: 'linear-gradient(180deg, rgba(139, 210, 168, 0.08) 0%, rgba(26, 26, 26, 1) 100%)',
-            border: '1px solid rgba(139, 210, 168, 0.22)',
-            boxShadow: '0 10px 24px rgba(139, 210, 168, 0.08)',
+            backgroundColor: 'var(--color-surface)',
+            border: '1px solid rgba(74, 222, 128, 0.2)',
+            boxShadow: '0 10px 24px rgba(0, 0, 0, 0.08)',
         };
     }
 
     return {
         ...impactCardStyle,
-        background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(26, 26, 26, 1) 100%)',
+        backgroundColor: 'var(--color-surface)',
         border: `1px solid ${tokens.colors.border}`,
-        boxShadow: '0 8px 18px rgba(0, 0, 0, 0.14)',
+        boxShadow: '0 8px 18px rgba(0, 0, 0, 0.08)',
     };
 };
 
@@ -753,8 +813,8 @@ const getImpactIconWrapStyle = (metricId: string): CSSProperties => {
         fontSize: '13px',
         fontWeight: '700',
         color: tokens.colors.text.primary,
-        backgroundColor: meta?.accent ?? 'rgba(255, 255, 255, 0.08)',
-        border: `1px solid ${meta?.featured ? 'rgba(139, 210, 168, 0.18)' : 'rgba(255, 255, 255, 0.06)'}`,
+        backgroundColor: meta?.accent ?? 'var(--color-border)',
+        border: '1px solid var(--color-border)',
     };
 };
 

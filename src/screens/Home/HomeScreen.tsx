@@ -142,7 +142,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
                     </>
                 ) : (
                     <div style={personalizeContainerStyle}>
-                        <h2 style={{ color: 'white', marginBottom: '16px' }}>Organiser mes listes</h2>
+                        <h2 style={{ color: tokens.colors.text.primary, marginBottom: '16px' }}>Organiser mes listes</h2>
                         <p style={{ color: tokens.colors.text.secondary, fontSize: '13px', marginBottom: '24px' }}>
                             Les listes vous permettent de regrouper vos comptes en fonction de vos usages...
                         </p>
@@ -199,7 +199,7 @@ const cardTopStyle: React.CSSProperties = {
 const cardLabelStyle: React.CSSProperties = {
     fontSize: '13px',
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: tokens.colors.text.primary,
 };
 
 const cardBalanceStyle: React.CSSProperties = {
@@ -224,7 +224,7 @@ const progressBarStyle: React.CSSProperties = {
     flex: 1,
     height: '6px',
     borderRadius: '3px',
-    backgroundColor: '#333333',
+    backgroundColor: '#0056B3',
 };
 
 const progressPercentageStyle: React.CSSProperties = {
@@ -238,7 +238,7 @@ const promoCardStyle: React.CSSProperties = {
     margin: `${tokens.spacing.lg} ${tokens.spacing.md}`,
     padding: tokens.spacing.md,
     borderRadius: tokens.radius.md,
-    backgroundColor: '#8B0000', // Darker Red for Promo
+    backgroundColor: '#8B0000',
     backgroundImage: 'linear-gradient(45deg, #8B0000, #E2001A)',
     color: 'white',
 };
@@ -246,7 +246,7 @@ const promoCardStyle: React.CSSProperties = {
 const promoBadgeStyle: React.CSSProperties = {
     display: 'inline-block',
     padding: '2px 8px',
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    backgroundColor: 'rgba(0,0,0,0.2)',
     borderRadius: '4px',
     fontSize: '10px',
     fontWeight: '700',
@@ -285,8 +285,8 @@ const simulatorToggleStyle: React.CSSProperties = {
     width: '100%',
     padding: `${tokens.spacing.sm} ${tokens.spacing.md}`,
     borderRadius: tokens.radius.md,
-    border: '1px solid rgba(255,255,255,0.08)',
-    backgroundColor: 'rgba(255,255,255,0.03)',
+    border: `1px solid ${tokens.colors.border}`,
+    backgroundColor: tokens.colors.surface,
     color: tokens.colors.text.primary,
     fontSize: '13px',
     fontWeight: '600',

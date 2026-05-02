@@ -12,7 +12,7 @@ interface BeRankCardProps {
 
 const BeRankCard: FC<BeRankCardProps> = ({ onOpen, summary, activeChallengesCount }) => {
     return (
-        <section style={cardStyle}>
+        <section style={cardStyle} className="fade-in-up">
             <div style={topRowStyle}>
                 <div>
                     <div style={titleRowStyle}>
@@ -34,7 +34,7 @@ const BeRankCard: FC<BeRankCardProps> = ({ onOpen, summary, activeChallengesCoun
                 progressLabel={`${summary.progressPercent}%`}
             />
 
-            <button type="button" style={buttonStyle} onClick={onOpen}>
+            <button type="button" style={buttonStyle} onClick={onOpen} className="button-hover">
                 <span>{summary.cta}</span>
                 <span aria-hidden="true">→</span>
             </button>
@@ -48,8 +48,8 @@ const cardStyle: CSSProperties = {
     margin: `0 ${tokens.spacing.md} ${tokens.spacing.lg}`,
     padding: tokens.spacing.md,
     borderRadius: tokens.radius.md,
-    border: `1px solid rgba(106, 174, 138, 0.35)`,
-    background: 'linear-gradient(180deg, rgba(106, 174, 138, 0.12) 0%, rgba(26, 26, 26, 1) 42%)',
+    border: '1px solid rgba(74, 222, 128, 0.2)',
+    background: 'var(--berank-gradient, linear-gradient(180deg, rgba(106, 174, 138, 0.12) 0%, rgba(26, 26, 26, 1) 42%))',
     display: 'flex',
     flexDirection: 'column',
     gap: tokens.spacing.md,
@@ -83,8 +83,8 @@ const subtitleStyle: CSSProperties = {
 const rankBadgeStyle: CSSProperties = {
     padding: '6px 10px',
     borderRadius: tokens.radius.full,
-    backgroundColor: 'rgba(181, 155, 93, 0.18)',
-    color: '#D8C27C',
+    backgroundColor: 'rgba(216, 169, 73, 0.18)',
+    color: 'var(--color-accent-coin)',
     fontSize: '11px',
     fontWeight: '700',
 };
@@ -113,8 +113,8 @@ const buttonStyle: CSSProperties = {
     width: '100%',
     padding: `${tokens.spacing.sm} ${tokens.spacing.md}`,
     borderRadius: tokens.radius.md,
-    border: `1px solid rgba(106, 174, 138, 0.28)`,
-    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+    border: '1px solid rgba(74, 222, 128, 0.28)',
+    backgroundColor: 'rgba(74, 222, 128, 0.03)',
     color: tokens.colors.text.primary,
     fontSize: '13px',
     fontWeight: '600',

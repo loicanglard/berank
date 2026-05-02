@@ -68,7 +68,7 @@ const txInfoStyle: React.CSSProperties = {
 const txLabelStyle: React.CSSProperties = {
     fontSize: '14px',
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: 'var(--color-text-primary)',
 };
 
 const txDateStyle: React.CSSProperties = {

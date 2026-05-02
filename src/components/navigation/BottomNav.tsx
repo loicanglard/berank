@@ -20,7 +20,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ activeTab, onTabChange }) => {
                         }}>
                             <span style={{
                                 fontSize: '20px',
-                                color: 'white',
+                                color: isActive ? 'white' : 'var(--color-text-secondary)',
                                 opacity: isActive ? 1 : 0.6
                             }}>{item.icon}</span>
                         </div>
@@ -44,7 +44,7 @@ const navStyle: React.CSSProperties = {
     left: 0,
     right: 0,
     height: '80px',
-    backgroundColor: '#0A0A0A',
+    backgroundColor: 'var(--color-surface)',
     borderTop: `1px solid ${tokens.colors.border}`,
     display: 'flex',
     justifyContent: 'space-around',

@@ -59,7 +59,7 @@ export const PurchaseSimulationForm: FC<PurchaseSimulationFormProps> = ({
 
             <div style={footerStyle}>
                 <span style={helperStyle}>Impact estimé : {pointsPreview > 0 ? '+' : ''}{pointsPreview} pts</span>
-                <button type="submit" style={buttonStyle}>
+                <button type="submit" style={buttonStyle} className="button-hover">
                     {submitLabel}
                 </button>
             </div>
@@ -73,8 +73,8 @@ const containerStyle: CSSProperties = {
     gap: tokens.spacing.md,
     padding: tokens.spacing.md,
     borderRadius: tokens.radius.xl,
-    backgroundColor: 'rgba(255,255,255,0.03)',
-    border: '1px solid rgba(255,255,255,0.08)',
+    backgroundColor: 'var(--color-surface)',
+    border: `1px solid var(--color-border)`,
 };
 
 const fieldsGridStyle: CSSProperties = {
@@ -100,9 +100,9 @@ const inputStyle: CSSProperties = {
     width: '100%',
     padding: '12px 14px',
     borderRadius: tokens.radius.lg,
-    border: '1px solid rgba(255,255,255,0.1)',
-    backgroundColor: 'rgba(15,15,15,0.9)',
-    color: tokens.colors.text.primary,
+    border: `1px solid var(--color-border)`,
+    backgroundColor: 'var(--color-background)',
+    color: 'var(--color-text-primary)',
     fontSize: tokens.typography.sizes.body,
     outline: 'none',
     boxSizing: 'border-box',

@@ -26,7 +26,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ activeTab, onTabChange }) => {
                             onClick={() => onTabChange(tab)}
                             style={{
                                 ...tabStyle,
-                                borderBottom: activeTab === tab ? '3px solid white' : 'none',
+                                borderBottom: activeTab === tab ? '3px solid var(--color-text-primary)' : 'none',
                                 opacity: activeTab === tab ? 1 : 0.6
                             }}
                         >
@@ -54,7 +54,7 @@ const overlayStyle: React.CSSProperties = {
     left: 0,
     right: 0,
     bottom: 0,
-    background: 'linear-gradient(rgba(0,0,0,0.1), rgba(15,15,15,1))',
+    background: 'linear-gradient(rgba(0,0,0,0.1), rgba(15,15,15,0.95))',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-end',
@@ -77,7 +77,7 @@ const notificationIconStyle: React.CSSProperties = {
     width: '36px',
     height: '36px',
     borderRadius: '50%',
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: 'rgba(0,0,0,0.3)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

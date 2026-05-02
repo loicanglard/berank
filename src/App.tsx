@@ -1,18 +1,37 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef, useEffect } from 'react';
 import HomeScreen from './screens/Home/HomeScreen';
 import VirementsScreen from './screens/Virements/VirementsScreen';
 import CartesScreen from './screens/Cartes/CartesScreen';
 import SouscrireScreen from './screens/Souscrire/SouscrireScreen';
 import PlusScreen from './screens/Plus/PlusScreen';
 import BeRankScreen from './screens/BeRank/BeRankScreen';
+import BeShopScreen from './screens/BeShop/BeShopScreen';
 import './styles/index.css';
 import { buildBeRankState, type PurchaseCategory, type SimulatedPurchase } from './utils/beRankSimulation';
 
 function App() {
   const [currentNav, setCurrentNav] = useState('Comptes');
   const [simulatedPurchases, setSimulatedPurchases] = useState<SimulatedPurchase[]>([]);
+  const [beCoins, setBeCoins] = useState(320);
+  const prevChallengesRef = useRef<string>('');
 
   const beRankState = useMemo(() => buildBeRankState(simulatedPurchases), [simulatedPurchases]);
+
+  // Detect newly completed challenges and add BeCoins
+  useEffect(() => {
+    const currentCompletedIds = beRankState.challengeHistory.map((h) => h.id).join(',');
+    
+    if (prevChallengesRef.current !== currentCompletedIds && beRankState.challengeHistory.length > 0) {
+      // Find the most recent completed challenge
+      const mostRecent = beRankState.challengeHistory[0];
+      const rewardCoins = mostRecent?.rewardCoins ?? 0;
+      if (rewardCoins > 0) {
+        setBeCoins((prev) => prev + rewardCoins);
+      }
+    }
+    
+    prevChallengesRef.current = currentCompletedIds;
+  }, [beRankState.challengeHistory]);
 
   const handleSimulatePurchase = (category: PurchaseCategory, amount: number) => {
     setSimulatedPurchases((currentPurchases) => [
@@ -61,6 +80,16 @@ function App() {
             impactMetrics={beRankState.impactMetrics}
             detectedEvents={beRankState.detectedEvents}
             onSimulatePurchase={handleSimulatePurchase}
+            beCoins={beCoins}
+          />
+        );
+      case 'BeShop':
+        return (
+          <BeShopScreen
+            currentNav={currentNav}
+            onNavChange={setCurrentNav}
+            beCoins={beCoins}
+            onSpendCoins={(amount) => setBeCoins(Math.max(0, beCoins - amount))}
           />
         );
       default:

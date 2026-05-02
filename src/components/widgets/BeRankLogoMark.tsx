@@ -9,7 +9,7 @@ const BeRankLogoMark: FC<BeRankLogoMarkProps> = ({ size = 22 }) => {
     const gradientId = useId();
 
     return (
-        <span style={getContainerStyle(size)} aria-hidden="true">
+        <span style={getContainerStyle(size)} aria-hidden="true" className="shimmer-subtle">
             <svg width={size - 4} height={size - 4} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                     <linearGradient id={gradientId} x1="8" y1="6" x2="40" y2="42" gradientUnits="userSpaceOnUse">

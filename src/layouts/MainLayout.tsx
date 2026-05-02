@@ -19,7 +19,7 @@ const shellStyle: React.CSSProperties = {
     width: '100%',
     maxWidth: `var(--app-shell-max-width, ${tokens.layout.maxWidth})`,
     minHeight: '100vh',
-    backgroundColor: '#000000', // Pure black as seen in dark mode screenshots
+    backgroundColor: 'var(--color-background)',
     display: 'flex',
     flexDirection: 'column',
     position: 'relative',

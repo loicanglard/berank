@@ -30,6 +30,7 @@ export interface CompletedChallengeHistoryEntry {
     title: string;
     completedAt: string;
     rewardPoints: number;
+    rewardCoins?: number;
     unlockedBenefit?: string;
 }
 
@@ -251,7 +252,7 @@ const buildTransactions = (purchases: SimulatedPurchase[]): AccountTransaction[]
     return [...simulatedTransactions, ...mockContent.recentTransactions];
 };
 
-const buildChallengeHistory = (purchases: SimulatedPurchase[]): CompletedChallengeHistoryEntry[] => {
+const buildChallengeHistory = (purchases: SimulatedPurchase[], challenges: BeRankChallenge[]): CompletedChallengeHistoryEntry[] => {
     const baseResponsibleCount = getBaseChallengeProgress('responsible-purchases');
     const responsiblePurchases = purchases
         .filter((purchase) => purchase.category === 'Responsable')
@@ -265,11 +266,13 @@ const buildChallengeHistory = (purchases: SimulatedPurchase[]): CompletedChallen
             return entries;
         }
 
+        const completedChallenge = challenges.find((c) => c.id === 'responsible-purchases');
         entries.push({
             id: `responsible-tier-${tier.target}`,
             title: `Effectuer ${tier.target} achats responsables cette semaine`,
             completedAt: responsiblePurchases[purchaseIndex].createdAt,
             rewardPoints: tier.rewardPoints,
+            rewardCoins: completedChallenge?.rewardCoins,
             unlockedBenefit: index === 0 ? 'Avantages partenaires engagés débloqués' : undefined,
         });
 
@@ -331,7 +334,7 @@ export const buildBeRankState = (purchases: SimulatedPurchase[]): DerivedBeRankS
         impactMetrics: buildImpactMetrics(purchases, challenges),
         detectedEvents: buildDetectedEvents(purchases),
         transactions: buildTransactions(purchases),
-        challengeHistory: buildChallengeHistory(purchases),
+        challengeHistory: buildChallengeHistory(purchases, challenges),
         activeChallengesCount: challenges.filter((challenge) => !isFinishedChallenge(challenge)).length,
         rankingLabel: totalPoints >= 1500 ? 'Top 10% des utilisateurs BeRank' : totalPoints >= 1300 ? 'Top 20% des utilisateurs BeRank' : 'Top 35% des utilisateurs BeRank',
     };

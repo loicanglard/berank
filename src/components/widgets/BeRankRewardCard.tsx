@@ -64,15 +64,15 @@ const descriptionStyle: CSSProperties = {
 
 const unlockStyle: CSSProperties = {
     fontSize: '11px',
-    color: '#D8C27C',
+    color: 'var(--color-accent-coin)',
     fontWeight: '600',
 };
 
 const statusStyle = (available: boolean): CSSProperties => ({
     padding: '4px 8px',
     borderRadius: tokens.radius.full,
-    backgroundColor: available ? 'rgba(106, 174, 138, 0.16)' : 'rgba(255, 255, 255, 0.05)',
-    color: available ? '#8BD2A8' : tokens.colors.text.secondary,
+    backgroundColor: available ? 'rgba(74, 222, 128, 0.16)' : 'rgba(156, 163, 175, 0.08)',
+    color: available ? 'var(--color-accent-green)' : 'var(--color-text-secondary)',
     fontSize: '10px',
     fontWeight: '700',
     whiteSpace: 'nowrap',

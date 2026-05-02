@@ -12,7 +12,7 @@ const BeRankProgress: FC<BeRankProgressProps> = ({
     progressPercent,
     progressLabel,
     caption = 'Votre progression BeRank',
-    accentColor = '#6AAE8A',
+    accentColor = 'var(--color-accent-green)',
 }) => {
     const safeProgress = Math.max(0, Math.min(progressPercent, 100));
 
@@ -64,12 +64,13 @@ const trackStyle: CSSProperties = {
     height: '8px',
     borderRadius: tokens.radius.full,
     overflow: 'hidden',
-    backgroundColor: '#262626',
+    backgroundColor: 'var(--color-border)',
 };
 
 const fillStyle: CSSProperties = {
     height: '100%',
     borderRadius: tokens.radius.full,
+    transition: 'width 0.8s ease-out',
 };
 
 export default BeRankProgress;

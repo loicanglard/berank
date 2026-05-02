@@ -5,16 +5,16 @@
 export const tokens = {
     colors: {
         primary: '#E2001A', // Banxo Red
-        background: '#0F0F0F', // Pure Dark Background
-        surface: '#1A1A1A', // Elevated Card Surface
-        border: '#2C2C2C', // Subtle Boundary
+        background: 'var(--color-background)', // Pure Dark Background
+        surface: 'var(--color-surface)', // Elevated Card Surface
+        border: 'var(--color-border)', // Subtle Boundary
         text: {
-            primary: '#FFFFFF',
-            secondary: '#999999',
-            muted: '#666666',
+            primary: 'var(--color-text-primary)',
+            secondary: 'var(--color-text-secondary)',
+            muted: 'var(--color-text-muted)',
             success: '#4ADE80',
         },
-        shadow: 'transparent',
+        shadow: 'var(--color-shadow)',
     },
     spacing: {
         xs: '4px',
